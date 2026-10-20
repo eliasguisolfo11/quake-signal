@@ -297,3 +297,31 @@ test("ignores an older response that finishes after a newer period", async () =>
   assert.equal(harness.runtime.states[3], null);
   harness.unmount();
 });
+
+test("loads the seven-day history and refreshes only on demand", async () => {
+  const requests = [];
+  globalThis.fetch = async (input) => {
+    const period = new URL(String(input), "http://localhost").searchParams.get("period");
+    requests.push(period);
+    return jsonResponse(createPayload(period, `event-${requests.length}`));
+  };
+  const browser = installBrowserMocks();
+  const harness = createHarness({ initialPeriod: "week", pollWhileVisible: false });
+
+  await harness.mount();
+
+  assert.deepEqual(requests, ["week"]);
+  assert.equal(browser.intervalDelay, undefined);
+  assert.equal(browser.listeners.size, 0);
+  assert.equal(harness.runtime.states[0], "week");
+  assert.equal(harness.runtime.states[1].period, "week");
+
+  harness.result.refresh();
+  await flushMicrotasks();
+
+  assert.deepEqual(requests, ["week", "week"]);
+  assert.equal(browser.intervalDelay, undefined);
+  assert.equal(browser.listeners.size, 0);
+  assert.equal(harness.runtime.states[1].events[0].id, "event-2");
+  harness.unmount();
+});
