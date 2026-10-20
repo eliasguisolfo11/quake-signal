@@ -19,9 +19,12 @@ async function loadTypeScriptModule(relativePath) {
   return import(`data:text/javascript,${encodeURIComponent(compiledSource)}`);
 }
 
-const { filterEvents, summarizeEvents } = await loadTypeScriptModule(
-  "../src/features/events/lib/event-filters.ts",
-);
+const {
+  filterEvents,
+  magnitudeBandKey,
+  summarizeEvents,
+  MAGNITUDE_BANDS,
+} = await loadTypeScriptModule("../src/features/events/lib/event-filters.ts");
 const { describeActiveFilters } = await loadTypeScriptModule(
   "../src/features/events/lib/event-labels.ts",
 );
@@ -93,5 +96,40 @@ test("names the active magnitude and continent filters in an empty state", () =>
   assert.deepEqual(
     describeActiveFilters({ minMagnitude: null, continent: "world" }),
     [],
+  );
+});
+
+test("assigns every magnitude boundary to exactly one declared map band", () => {
+  const cases = [
+    [1.99, "under-2"],
+    [2, "2-to-3"],
+    [2.99, "2-to-3"],
+    [3, "3-to-4"],
+    [3.99, "3-to-4"],
+    [4, "4-to-5"],
+    [4.99, "4-to-5"],
+    [5, "5-to-6"],
+    [5.99, "5-to-6"],
+    [6, "6-to-7"],
+    [6.99, "6-to-7"],
+    [7, "7-plus"],
+    [8.2, "7-plus"],
+    [null, "unknown"],
+  ];
+
+  for (const [magnitude, expectedBand] of cases) {
+    assert.equal(magnitudeBandKey(magnitude), expectedBand);
+  }
+  assert.deepEqual(
+    MAGNITUDE_BANDS.map((band) => band.label),
+    [
+      "m < 2,0",
+      "2,0 ≤ m < 3,0",
+      "3,0 ≤ m < 4,0",
+      "4,0 ≤ m < 5,0",
+      "5,0 ≤ m < 6,0",
+      "6,0 ≤ m < 7,0",
+      "m ≥ 7,0",
+    ],
   );
 });
