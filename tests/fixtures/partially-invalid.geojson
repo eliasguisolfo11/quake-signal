@@ -1,0 +1,52 @@
+{
+  "type": "FeatureCollection",
+  "metadata": {
+    "generated": 1767225600000,
+    "status": 200
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "id": "us7000fixture",
+      "properties": {
+        "time": 1767225600000,
+        "mag": 4.2,
+        "place": "  Example coast  ",
+        "updated": 1767225601000,
+        "alert": "green",
+        "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us7000fixture"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-73.9, 40.7, 12.4]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "us7000missing-fields",
+      "properties": {
+        "time": 1767225602000,
+        "place": " "
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [181, 40, 10]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "time": 1767225603000
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "id": "us7000invalid-time",
+      "properties": {
+        "time": 0
+      },
+      "geometry": null
+    }
+  ]
+}

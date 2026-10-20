@@ -1,0 +1,22 @@
+{
+  "type": "FeatureCollection",
+  "metadata": {
+    "generated": 1767225600000,
+    "status": 200
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "id": "us7000missing-time",
+      "properties": {},
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "time": 1767225600000
+      },
+      "geometry": null
+    }
+  ]
+}
