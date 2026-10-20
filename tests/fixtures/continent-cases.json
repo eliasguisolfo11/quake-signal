@@ -1,0 +1,53 @@
+{
+  "classified": [
+    {
+      "name": "Seattle",
+      "coordinates": { "longitude": -122.3321, "latitude": 47.6062 },
+      "continent": "North America"
+    },
+    {
+      "name": "Buenos Aires",
+      "coordinates": { "longitude": -58.3816, "latitude": -34.6037 },
+      "continent": "South America"
+    },
+    {
+      "name": "Nairobi",
+      "coordinates": { "longitude": 36.8219, "latitude": -1.2921 },
+      "continent": "Africa"
+    },
+    {
+      "name": "Tokyo",
+      "coordinates": { "longitude": 139.6917, "latitude": 35.6895 },
+      "continent": "Asia"
+    },
+    {
+      "name": "Paris",
+      "coordinates": { "longitude": 2.3522, "latitude": 48.8566 },
+      "continent": "Europe"
+    },
+    {
+      "name": "Sydney",
+      "coordinates": { "longitude": 151.2093, "latitude": -33.8688 },
+      "continent": "Oceania"
+    },
+    {
+      "name": "Antarctica",
+      "coordinates": { "longitude": 0, "latitude": -80 },
+      "continent": "Antarctica"
+    }
+  ],
+  "unclassified": [
+    {
+      "name": "Atlantic Ocean",
+      "coordinates": { "longitude": -30, "latitude": 0 }
+    },
+    {
+      "name": "Pacific Ocean",
+      "coordinates": { "longitude": 170, "latitude": 0 }
+    },
+    {
+      "name": "Missing coordinates",
+      "coordinates": null
+    }
+  ]
+}
