@@ -5,7 +5,7 @@ import { useCallback, useMemo, useState } from "react";
 import { AppShell } from "@/components/app-shell/app-shell";
 import { useEvents } from "../hooks/use-events";
 import { filterEvents, summarizeEvents } from "../lib/event-filters";
-import { PERIOD_LABELS } from "../lib/event-labels";
+import { describeActiveFilters, PERIOD_LABELS } from "../lib/event-labels";
 import type { Continent, EventPeriod } from "../lib/types";
 import { EventControls } from "./event-controls";
 import { EventFeedPanel } from "./event-feed-panel";
@@ -41,6 +41,7 @@ export function EventExplorer({ mode }: { mode: "monitor" | "history" }) {
     magnitudeValue !== null &&
     (!Number.isFinite(magnitudeValue) || !Number.isInteger(magnitudeValue * 10));
   const minMagnitude = magnitudeError ? null : magnitudeValue;
+  const activeFilterLabels = describeActiveFilters({ minMagnitude, continent });
   const filteredEvents = useMemo(
     () => filterEvents(payload?.events ?? [], { minMagnitude, continent }),
     [continent, minMagnitude, payload?.events],
@@ -48,7 +49,8 @@ export function EventExplorer({ mode }: { mode: "monitor" | "history" }) {
   const summary = useMemo(() => summarizeEvents(filteredEvents), [filteredEvents]);
   const selectedEvent =
     filteredEvents.find((event) => event.id === selectedEventId) ?? null;
-  const hasFilters = minimumMagnitude.trim() !== "" || continent !== "world";
+  const hasFilterInput = minimumMagnitude.trim() !== "" || continent !== "world";
+  const hasActiveFilters = activeFilterLabels.length > 0;
   const status = error ? "error" : isLoading && !payload ? "loading" : "ready";
   const visibleEvents =
     mode === "monitor" ? filteredEvents.slice(0, 10) : filteredEvents;
@@ -118,7 +120,7 @@ export function EventExplorer({ mode }: { mode: "monitor" | "history" }) {
           minimumMagnitude={minimumMagnitude}
           magnitudeError={magnitudeError}
           continent={continent}
-          hasFilters={hasFilters}
+          hasFilters={hasFilterInput}
           onPeriodChange={changePeriod}
           onMinimumMagnitudeChange={changeMinimumMagnitude}
           onContinentChange={changeContinent}
@@ -197,7 +199,8 @@ export function EventExplorer({ mode }: { mode: "monitor" | "history" }) {
             summary={summary}
             isLoading={isLoading}
             hasPayload={payload !== null}
-            hasFilters={hasFilters}
+            hasFilters={hasActiveFilters}
+            activeFilterLabels={activeFilterLabels}
             onClearFilters={clearFilters}
             onSelectEvent={selectEvent}
             onBackToEvents={() => setSelectedEventId(null)}

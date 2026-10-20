@@ -15,3 +15,24 @@ export const CONTINENT_LABELS: Record<Continent, string> = {
   Oceania: "Oceanía",
   Antarctica: "Antártida",
 };
+
+export function describeActiveFilters(options: {
+  minMagnitude: number | null;
+  continent: Continent | "world";
+}): string[] {
+  const labels: string[] = [];
+
+  if (options.minMagnitude !== null) {
+    const magnitude = new Intl.NumberFormat("es-AR", {
+      minimumFractionDigits: 1,
+      maximumFractionDigits: 1,
+    }).format(options.minMagnitude);
+    labels.push(`Magnitud mínima ≥ ${magnitude}`);
+  }
+
+  if (options.continent !== "world") {
+    labels.push(CONTINENT_LABELS[options.continent]);
+  }
+
+  return labels;
+}

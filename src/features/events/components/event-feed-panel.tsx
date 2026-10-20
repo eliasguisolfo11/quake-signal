@@ -118,10 +118,18 @@ function EmptyFeed(props: {
   hasPayload: boolean;
   hasEvents: boolean;
   hasFilters: boolean;
+  activeFilterLabels: string[];
   isLoading: boolean;
   onClear: () => void;
 }) {
-  const { hasPayload, hasEvents, hasFilters, isLoading, onClear } = props;
+  const {
+    hasPayload,
+    hasEvents,
+    hasFilters,
+    activeFilterLabels,
+    isLoading,
+    onClear,
+  } = props;
 
   if (isLoading && !hasPayload) {
     return (
@@ -136,7 +144,7 @@ function EmptyFeed(props: {
     return (
       <div className="feed-empty">
         <p>Ningún evento coincide con estos filtros.</p>
-        <span>El período consultado sí contiene eventos.</span>
+        <span>Filtros activos: {activeFilterLabels.join(" · ")}</span>
         <button className="text-button" type="button" onClick={onClear}>
           Limpiar filtros
         </button>
@@ -171,6 +179,7 @@ export function EventFeedPanel({
   isLoading,
   hasPayload,
   hasFilters,
+  activeFilterLabels,
   onClearFilters,
   onSelectEvent,
   onBackToEvents,
@@ -184,6 +193,7 @@ export function EventFeedPanel({
   isLoading: boolean;
   hasPayload: boolean;
   hasFilters: boolean;
+  activeFilterLabels: string[];
   onClearFilters: () => void;
   onSelectEvent: (eventId: string) => void;
   onBackToEvents: () => void;
@@ -231,6 +241,7 @@ export function EventFeedPanel({
               hasPayload={hasPayload}
               hasEvents={totalEventCount > 0}
               hasFilters={hasFilters}
+              activeFilterLabels={activeFilterLabels}
               isLoading={isLoading}
               onClear={onClearFilters}
             />
