@@ -54,7 +54,7 @@ La ruta histórica obtiene todas las páginas necesarias antes de construir y de
 
 ### Países, tierra y mapa
 
-- Incorporar geometrías reducidas y fijadas en **src/features/analytics/data/**: Admin 0 – Countries de Natural Earth 1:110m, versión 5.1.1, y geometría de tierra de Natural Earth Physical Vectors, versión 5.1.0. Guardar en GeoJSON solo las propiedades necesarias; registrar origen, versión, fecha de incorporación y hash del archivo en un README.
+- Incorporar geometrías reducidas y fijadas en **src/features/analytics/data/**: Admin 0 – Countries de Natural Earth 1:110m, versión 5.1.1, y el archivo Land de Natural Earth 1:110m, versión 4.0.0. Guardar en GeoJSON solo las propiedades necesarias; registrar origen, versión, fecha de incorporación y hash del archivo en un README.
 - No reutilizar el texto libre de **place** para asignar un país. Primero comprobar si la coordenada cae en tierra; un punto fuera de tierra se clasifica como Oceánico. Para puntos en tierra, un interior único se asigna a ese país; tierra sin país, fronteras/solapamientos y coordenadas ausentes o inválidas se conservan como grupos distintos.
 - Extraer o compartir primitivas geométricas de **continents.ts** solo si permite conservar sus resultados actuales. Usar rechazo rápido por cajas envolventes antes de comprobar los polígonos y sus huecos. Una frontera detectada cuenta como coincidencia de borde, no como interior exclusivo. Probar antimeridiano, huecos, bordes, agua y puntos sin coordenadas.
 - Dibujar coropleta de conteos observados en MapLibre. El ranking y la ficha de país serán una alternativa completa, operable con teclado y suficiente cuando el mapa no cargue. La selección desde mapa y ranking actualiza la misma ficha.
