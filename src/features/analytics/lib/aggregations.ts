@@ -146,7 +146,7 @@ function nextBucket(date: Date, period: AnalyticsPeriod): Date {
   return next;
 }
 
-function buildTimeSeries(
+function buildTimeSeriesForRange(
   events: HistoricalEvent[],
   period: AnalyticsPeriod,
   start: number,
@@ -176,6 +176,15 @@ function buildTimeSeries(
     bucketStart: bucketStartValue,
     count,
   }));
+}
+
+export function buildTimeSeries(
+  events: HistoricalEvent[],
+  period: AnalyticsPeriod,
+  window: AnalyticsWindow,
+): CountBucket[] {
+  const { start, end } = normalizeWindow(window);
+  return buildTimeSeriesForRange(events, period, start, end);
 }
 
 function buildMagnitudeDistribution(
@@ -276,7 +285,7 @@ export function aggregateAnalytics(
     medianMagnitude: median(magnitudes),
     eventsWithMagnitude: magnitudes.length,
     eventsWithoutMagnitude: events.length - magnitudes.length,
-    timeSeries: buildTimeSeries(events, options.period, start, end),
+    timeSeries: buildTimeSeriesForRange(events, options.period, start, end),
     magnitudeDistribution: buildMagnitudeDistribution(
       events,
       options.minMagnitude === null,

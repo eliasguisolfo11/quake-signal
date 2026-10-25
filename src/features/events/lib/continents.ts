@@ -1,4 +1,8 @@
 import countryGeometries from "../data/continents.json";
+import {
+  locatePointInRing,
+  prepareRing,
+} from "../../../lib/geo/point-in-polygon";
 import type { Continent } from "./types";
 
 type Position = readonly [number, number];
@@ -26,76 +30,9 @@ const features = (
   countryGeometries as unknown as { features: CountryFeature[] }
 ).features;
 
-function unwrapRing(ring: Ring, referenceLongitude: number): Position[] {
-  if (ring.length === 0) {
-    return [];
-  }
-
-  const unwrapped: Position[] = [];
-  let previousLongitude = ring[0][0];
-  unwrapped.push([previousLongitude, ring[0][1]]);
-
-  for (const [rawLongitude, latitude] of ring.slice(1)) {
-    let longitude = rawLongitude;
-    while (longitude - previousLongitude > 180) longitude -= 360;
-    while (longitude - previousLongitude < -180) longitude += 360;
-    unwrapped.push([longitude, latitude]);
-    previousLongitude = longitude;
-  }
-
-  const longitudes = unwrapped.map(([longitude]) => longitude);
-  const center = (Math.min(...longitudes) + Math.max(...longitudes)) / 2;
-  const shift = 360 * Math.round((referenceLongitude - center) / 360);
-  return unwrapped.map(([longitude, latitude]) => [longitude + shift, latitude]);
-}
-
-function liesOnSegment(
-  longitude: number,
-  latitude: number,
-  first: Position,
-  second: Position,
-): boolean {
-  const cross =
-    (latitude - first[1]) * (second[0] - first[0]) -
-    (longitude - first[0]) * (second[1] - first[1]);
-
-  if (Math.abs(cross) > 1e-8) {
-    return false;
-  }
-
-  return (
-    longitude >= Math.min(first[0], second[0]) - 1e-8 &&
-    longitude <= Math.max(first[0], second[0]) + 1e-8 &&
-    latitude >= Math.min(first[1], second[1]) - 1e-8 &&
-    latitude <= Math.max(first[1], second[1]) + 1e-8
-  );
-}
-
 function pointInRing(longitude: number, latitude: number, ring: Ring): boolean {
-  const points = unwrapRing(ring, longitude);
-  let inside = false;
-
-  for (let index = 0, previous = points.length - 1; index < points.length; previous = index++) {
-    const first = points[previous];
-    const second = points[index];
-
-    if (liesOnSegment(longitude, latitude, first, second)) {
-      return true;
-    }
-
-    const crossesLatitude = (first[1] > latitude) !== (second[1] > latitude);
-    if (
-      crossesLatitude &&
-      longitude <
-        ((second[0] - first[0]) * (latitude - first[1])) /
-          (second[1] - first[1]) +
-          first[0]
-    ) {
-      inside = !inside;
-    }
-  }
-
-  return inside;
+  const prepared = prepareRing(ring);
+  return prepared !== null && locatePointInRing(longitude, latitude, prepared) !== "outside";
 }
 
 function pointInPolygon(longitude: number, latitude: number, polygon: Polygon): boolean {
