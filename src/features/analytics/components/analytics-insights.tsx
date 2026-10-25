@@ -1,6 +1,8 @@
 "use client";
 
 import type { AnalyticsData } from "../lib/contracts";
+import type { AnalyticsFilters } from "../lib/contracts";
+import { AnalyticsCountryExplorer } from "./analytics-country-explorer";
 import { AnalyticsCharts } from "./analytics-charts";
 
 function formatCount(value: number): string {
@@ -17,7 +19,7 @@ function formatMedianMagnitude(value: number | null): string {
   return new Intl.NumberFormat("es-AR", { minimumFractionDigits: 1, maximumFractionDigits: 2 }).format(value);
 }
 
-export function AnalyticsInsights({ data, period }: { data: AnalyticsData; period: "30d" | "12m" | "5y" }) {
+export function AnalyticsInsights({ data, filters }: { data: AnalyticsData; filters: AnalyticsFilters }) {
   const { summary } = data;
   return (
     <div className="analytics-overview">
@@ -29,15 +31,16 @@ export function AnalyticsInsights({ data, period }: { data: AnalyticsData; perio
           </div>
           <div>
             <dt>Magnitud máxima</dt>
-            <dd>{formatMagnitude(summary.maximumMagnitude)} <span>Mw</span></dd>
+            <dd>{formatMagnitude(summary.maximumMagnitude)} <span>M</span></dd>
           </div>
           <div>
             <dt>Mediana de magnitud</dt>
-            <dd>{formatMedianMagnitude(summary.medianMagnitude)} <span>Mw</span></dd>
+            <dd>{formatMedianMagnitude(summary.medianMagnitude)} <span>M</span></dd>
           </div>
         </dl>
       </section>
-      <AnalyticsCharts data={data} period={period} />
+      <AnalyticsCountryExplorer geography={data.geography} filters={filters} />
+      <AnalyticsCharts data={data} period={filters.period} />
     </div>
   );
 }

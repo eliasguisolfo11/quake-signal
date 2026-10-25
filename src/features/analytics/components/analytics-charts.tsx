@@ -1,5 +1,5 @@
 import type { AnalyticsData } from "../lib/contracts";
-import { getNiceCountTicks, getObservedCountryRanking } from "../lib/presentation-model";
+import { getNiceCountTicks } from "../lib/presentation-model";
 
 const COUNT_FORMATTER = new Intl.NumberFormat("es-AR", { maximumFractionDigits: 0 });
 
@@ -142,65 +142,6 @@ function DistributionPanel({
   );
 }
 
-function GeographyPanel({ geography }: { geography: AnalyticsData["geography"] }) {
-  const ranking = getObservedCountryRanking(geography.groups);
-  const unassigned = geography.groups.flatMap((group) =>
-    group.kind === "country" || group.totalEvents === 0
-      ? []
-      : [{ id: group.id, label: group.label, totalEvents: group.totalEvents }],
-  );
-  const maximum = Math.max(0, ...ranking.map(({ totalEvents }) => totalEvents));
-  const unassignedTotal = unassigned.reduce((total, group) => total + group.totalEvents, 0);
-  const countryTotal = ranking.length === 0
-    ? 0
-    : geography.groups.reduce((total, group) => total + (group.kind === "country" ? group.totalEvents : 0), 0);
-
-  return (
-    <section className="analytics-panel analytics-geography-panel" aria-labelledby="analytics-geography-title">
-      <div className="analytics-panel-heading">
-        <div>
-          <p className="analytics-eyebrow">DISTRIBUCIÓN GEOGRÁFICA</p>
-          <h2 id="analytics-geography-title">Dónde se registró actividad</h2>
-          <p>País asignado por epicentro · conteos observados</p>
-        </div>
-        <span className="analytics-panel-unit">top 5</span>
-      </div>
-      {ranking.length > 0 ? (
-        <ol className="analytics-country-list">
-          {ranking.map((country, index) => (
-            <li className="analytics-country-row" key={country.id}>
-              <span className="analytics-country-position">{String(index + 1).padStart(2, "0")}</span>
-              <span className="analytics-country-name">{country.name}</span>
-              <span className="analytics-country-track" aria-hidden="true">
-                <span style={{ width: `${country.totalEvents / maximum * 100}%` }} />
-              </span>
-              <output className="analytics-country-count" aria-label={`${country.name}: ${formatCount(country.totalEvents)} eventos`}>
-                {formatCount(country.totalEvents)}
-              </output>
-            </li>
-          ))}
-        </ol>
-      ) : (
-        <p className="analytics-chart-empty">No hay eventos atribuidos a países en esta consulta.</p>
-      )}
-      <div className="analytics-geography-footnote">
-        <span>{formatCount(countryTotal)} asignados a países</span>
-        <span>{formatCount(unassignedTotal)} en grupos sin país</span>
-      </div>
-      {unassigned.length > 0 ? (
-        <details className="analytics-unassigned-details">
-          <summary>Ver eventos sin país asignado ({formatCount(unassignedTotal)})</summary>
-          <ul>
-            {unassigned.map((group) => (
-              <li key={group.id}><span>{group.label}</span><output>{formatCount(group.totalEvents)}</output></li>
-            ))}
-          </ul>
-        </details>
-      ) : null}
-    </section>
-  );
-}
-
 export function AnalyticsCharts({ data, period }: { data: AnalyticsData; period: "30d" | "12m" | "5y" }) {
   return (
     <div className="analytics-visualizations">
@@ -209,7 +150,7 @@ export function AnalyticsCharts({ data, period }: { data: AnalyticsData; period:
         <DistributionPanel
           title="Por magnitud"
           eyebrow="TAMAÑO DEL EVENTO"
-          description="Bandas del catálogo USGS · Mw"
+          description="Bandas de magnitud del catálogo USGS"
           buckets={data.summary.magnitudeDistribution}
         />
         <DistributionPanel
@@ -219,7 +160,6 @@ export function AnalyticsCharts({ data, period }: { data: AnalyticsData; period:
           buckets={data.summary.depthDistribution}
         />
       </div>
-      <GeographyPanel geography={data.geography} />
       <p className="analytics-observed-note">Las frecuencias describen los eventos registrados en el intervalo consultado; no son una predicción de sismos futuros.</p>
     </div>
   );

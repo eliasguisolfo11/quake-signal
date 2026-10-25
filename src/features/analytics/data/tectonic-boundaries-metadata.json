@@ -1,0 +1,12 @@
+{
+  "source": "https://earthquake.usgs.gov/arcgis/rest/services/eq/map_plateboundaries/MapServer/1",
+  "query": "https://earthquake.usgs.gov/arcgis/rest/services/eq/map_plateboundaries/MapServer/1/query?where=1%3D1&outFields=OBJECTID%2CNAME%2CLABEL&outSR=4326&returnGeometry=true&f=geojson",
+  "capturedAt": "2026-10-25T21:59:51.624Z",
+  "featureCount": 1175,
+  "missingNames": 3,
+  "geometryCounts": {
+    "LineString": 1173,
+    "MultiLineString": 2
+  },
+  "sha256": "85bd1dc269b66529fd79e5e544b15c30bc9351be4ac145a46d6dff3bfcc98c10"
+}

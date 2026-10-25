@@ -112,7 +112,7 @@ Los rangos concretos de magnitud se definen junto con la fuente de datos y se im
 
 ### Tipografía
 
-- Interfaz: IBM Plex Sans, con una alternativa sans-serif del sistema.
+- Interfaz: Geist, con una alternativa sans-serif del sistema.
 - Datos técnicos, coordenadas e identificadores: IBM Plex Mono, solo donde la precisión de alineación lo ayude a leer.
 - Título de página: 22–26 px, peso medio.
 - Título de panel: 15–16 px.
