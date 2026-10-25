@@ -27,3 +27,13 @@ Never imply that a feed is live unless its provider guarantees that. Do not infe
 - `.opencode/` is the unmodified upstream source snapshot; use the Codex resources for this repository.
 
 - Use sdd-feature as the end-to-end entry point for a feature. It pauses for approval of the draft spec and then the plan and tasks; after approval it implements tasks in order and validates against the repository's real checks.
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+## This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->
