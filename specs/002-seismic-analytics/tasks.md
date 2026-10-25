@@ -2,7 +2,7 @@
 
 ## Estado
 
-Borrador para aprobación del usuario. Derivado de la especificación aprobada y de [plan.md](./plan.md). No iniciar implementación hasta aprobar este plan y estas tareas.
+Aprobadas por el usuario el 2026-10-25. Derivadas de la especificación y el plan aprobados; implementar en el orden indicado.
 
 ## Orden de trabajo
 

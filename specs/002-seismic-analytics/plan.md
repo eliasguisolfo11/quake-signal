@@ -2,7 +2,7 @@
 
 ## Estado
 
-Borrador para aprobación del usuario. La especificación fue aprobada por el usuario el 2026-10-25. No se inició implementación.
+Aprobado por el usuario el 2026-10-25. La especificación también está aprobada; la implementación puede avanzar en el orden de tareas definido.
 
 ## Alcance
 
