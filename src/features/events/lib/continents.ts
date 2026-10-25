@@ -2,6 +2,7 @@ import countryGeometries from "../data/continents.json";
 import {
   locatePointInRing,
   prepareRing,
+  type PreparedRing,
 } from "../../../lib/geo/point-in-polygon";
 import type { Continent } from "./types";
 
@@ -15,6 +16,8 @@ type CountryFeature = {
     coordinates: Polygon | Polygon[];
   };
 };
+type PreparedPolygon = { outer: PreparedRing; holes: PreparedRing[] };
+type PreparedContinentFeature = { continent: Continent; polygons: PreparedPolygon[] };
 
 const validContinents = new Set<string>([
   "North America",
@@ -30,28 +33,44 @@ const features = (
   countryGeometries as unknown as { features: CountryFeature[] }
 ).features;
 
-function pointInRing(longitude: number, latitude: number, ring: Ring): boolean {
-  const prepared = prepareRing(ring);
-  return prepared !== null && locatePointInRing(longitude, latitude, prepared) !== "outside";
+function preparePolygon(polygon: Polygon): PreparedPolygon | null {
+  const [outerSource, ...holeSources] = polygon;
+  const outer = outerSource ? prepareRing(outerSource) : null;
+  if (!outer) return null;
+
+  return {
+    outer,
+    holes: holeSources.flatMap((ring) => {
+      const prepared = prepareRing(ring);
+      return prepared ? [prepared] : [];
+    }),
+  };
 }
 
-function pointInPolygon(longitude: number, latitude: number, polygon: Polygon): boolean {
-  const [outerRing, ...holes] = polygon;
-  if (!outerRing || !pointInRing(longitude, latitude, outerRing)) {
+const preparedFeatures: PreparedContinentFeature[] = features.flatMap((feature) => {
+  const continent = feature.properties.continent;
+  if (!validContinents.has(continent)) return [];
+
+  const sourcePolygons = feature.geometry.type === "Polygon"
+    ? [feature.geometry.coordinates as Polygon]
+    : feature.geometry.coordinates as Polygon[];
+  const polygons = sourcePolygons
+    .map(preparePolygon)
+    .filter((polygon): polygon is PreparedPolygon => polygon !== null);
+  return polygons.length > 0 ? [{ continent: continent as Continent, polygons }] : [];
+});
+
+function pointInPreparedPolygon(
+  longitude: number,
+  latitude: number,
+  polygon: PreparedPolygon,
+): boolean {
+  if (locatePointInRing(longitude, latitude, polygon.outer) === "outside") {
     return false;
   }
 
-  return !holes.some((hole) => pointInRing(longitude, latitude, hole));
-}
-
-function pointInGeometry(longitude: number, latitude: number, feature: CountryFeature): boolean {
-  const { type, coordinates } = feature.geometry;
-  if (type === "Polygon") {
-    return pointInPolygon(longitude, latitude, coordinates as Polygon);
-  }
-
-  return (coordinates as Polygon[]).some((polygon) =>
-    pointInPolygon(longitude, latitude, polygon),
+  return !polygon.holes.some((hole) =>
+    locatePointInRing(longitude, latitude, hole) !== "outside",
   );
 }
 
@@ -62,13 +81,11 @@ export function classifyContinent(
     return null;
   }
 
-  for (const feature of features) {
-    const continent = feature.properties.continent;
-    if (
-      validContinents.has(continent) &&
-      pointInGeometry(coordinates.longitude, coordinates.latitude, feature)
-    ) {
-      return continent as Continent;
+  for (const feature of preparedFeatures) {
+    if (feature.polygons.some((polygon) =>
+      pointInPreparedPolygon(coordinates.longitude, coordinates.latitude, polygon),
+    )) {
+      return feature.continent;
     }
   }
 

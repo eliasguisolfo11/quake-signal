@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 type AppShellProps = {
-  active: "monitor" | "history";
+  active: "monitor" | "history" | "analytics";
   status: "loading" | "ready" | "error";
   receivedAt: string | null;
   onRefresh: () => void;
@@ -57,6 +57,12 @@ export function AppShell({
             aria-current={active === "history" ? "page" : undefined}
           >
             Historial
+          </Link>
+          <Link
+            href="/analytics"
+            aria-current={active === "analytics" ? "page" : undefined}
+          >
+            Análisis
           </Link>
         </nav>
 
