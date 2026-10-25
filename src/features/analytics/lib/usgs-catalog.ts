@@ -186,8 +186,8 @@ function sourceMinimumMagnitude(minMagnitude: number | null): number | null {
     return null;
   }
 
-  if (!Number.isFinite(minMagnitude) || minMagnitude < 0) {
-    throw new RangeError("La magnitud mínima debe ser un número no negativo.");
+  if (!Number.isFinite(minMagnitude)) {
+    throw new RangeError("La magnitud mínima debe ser un número válido.");
   }
 
   if (minMagnitude < 0.1) {

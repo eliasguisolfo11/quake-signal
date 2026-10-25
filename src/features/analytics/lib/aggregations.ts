@@ -100,8 +100,8 @@ function filterByMagnitude(
     return events;
   }
 
-  if (!Number.isFinite(minMagnitude) || minMagnitude < 0) {
-    throw new RangeError("La magnitud mínima debe ser un número no negativo.");
+  if (!Number.isFinite(minMagnitude)) {
+    throw new RangeError("La magnitud mínima debe ser un número válido.");
   }
 
   return events.filter(

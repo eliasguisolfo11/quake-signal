@@ -105,6 +105,29 @@ test("queries the USGS minimum one magnitude step below the inclusive threshold"
   assert.equal(requested[0].searchParams.get("endtime"), "2024-02-29T23:59:59.999Z");
 });
 
+test("omits the source magnitude filter below 0.1, including negative tenths", async () => {
+  const requested = [];
+  const result = await catalog.retrieveHistoricalCatalog({
+    period: "30d",
+    minMagnitude: -0.1,
+    now: () => new Date("2024-03-01T00:00:00.000Z"),
+    fetcher: async (input) => {
+      const url = new URL(String(input));
+      requested.push(url);
+      return url.pathname.endsWith("/count")
+        ? new Response("1")
+        : jsonResponse(featureCollection([
+            eventFeature("negative", Date.parse("2024-02-15T00:00:00.000Z"), -0.1),
+          ]));
+    },
+  });
+
+  assert.equal(result.status, "complete");
+  assert.equal(result.query.sourceMinimumMagnitude, null);
+  assert.equal(requested.some((url) => url.searchParams.has("minmagnitude")), false);
+  assert.equal(result.events[0].magnitude, -0.1);
+});
+
 test("retrieves every page, deduplicates IDs, and preserves missing values", async () => {
   const requested = [];
   const events = [

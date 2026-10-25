@@ -124,6 +124,21 @@ test("applies an inclusive minimum magnitude and excludes missing magnitude", ()
   assert.equal(result.magnitudeDistribution.some(({ key }) => key === "unknown"), false);
 });
 
+test("accepts negative minimum magnitudes in tenths, matching the existing control", () => {
+  const result = aggregateAnalytics(
+    [
+      event("negative", { magnitude: -0.2 }),
+      event("equal", { magnitude: -0.1 }),
+      event("positive", { magnitude: 0.1 }),
+      event("missing", { magnitude: null }),
+    ],
+    { period: "30d", window: dayWindow, minMagnitude: -0.1 },
+  );
+
+  assert.deepEqual(result.events.map(({ id }) => id), ["equal", "positive"]);
+  assert.equal(result.totalEvents, 2);
+});
+
 test("classifies exact depth boundaries and keeps out-of-class and missing values separate", () => {
   const depths = [0, 70, 70.1, 300, 300.1, 700, 700.1, -1, null];
   const result = aggregateAnalytics(
