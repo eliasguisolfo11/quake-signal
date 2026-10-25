@@ -2,7 +2,7 @@
 
 ## Estado
 
-Borrador — pendiente de revisión y aprobación del usuario.
+Aprobada por el usuario el 2026-10-25.
 
 ## Contexto
 
@@ -83,7 +83,7 @@ Personas que quieren comparar la actividad sísmica registrada entre lugares y p
 - **AC-11:** cada vista de datos identifica USGS, período UTC, filtros, momento de consulta y versión/procedencia geográfica; enlaces a eventos abren los registros USGS.
 - **AC-12:** la aplicación no usa lenguaje de pronóstico, peligro, daño o seguridad basado solo en conteos, magnitud o contexto tectónico.
 
-## Supuestos para revisión
+## Supuestos aprobados
 
 - Los períodos iniciales son 30 días, 12 meses y 5 años; el valor inicial es 30 días.
 - Los límites temporales y series se expresan en UTC para que los intervalos sean reproducibles.
@@ -94,7 +94,7 @@ Personas que quieren comparar la actividad sísmica registrada entre lugares y p
 
 ## Preguntas abiertas
 
-- Ninguna bloqueante para este borrador. Las decisiones listadas en supuestos se someten a aprobación junto con la especificación.
+- Ninguna pendiente al aprobar esta especificación.
 
 ## Fuentes previstas
 
