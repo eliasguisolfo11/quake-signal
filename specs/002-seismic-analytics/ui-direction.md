@@ -1,7 +1,7 @@
 # Dirección de interfaz — T-11
 
 - **Pregunta principal:** ¿qué actividad sísmica registrada hubo durante el período elegido y dónde se concentró?
-- **Objeto:** evento USGS único por `id`, con magnitud (Mw reportada, puede faltar), profundidad (km), origen (UTC), epicentro (lat/lon), lugar y enlace oficial.
+- **Objeto:** evento USGS único por `id`, con magnitud reportada (puede faltar), profundidad (km), origen (UTC), epicentro (lat/lon), lugar y enlace oficial. La interfaz no etiqueta una escala de magnitud que el contrato actual no conserva.
 - **Períodos:** ventanas móviles de 30 días, 12 meses y 5 años; los límites y las series se muestran en UTC.
 - **Filtros:** magnitud mínima opcional en pasos de 0,1 y continente, con Norteamérica y Sudamérica separados.
 - **Magnitudes reales observadas:** dependen del corte consultado; la respuesta API incluye conteo esperado/recuperado, intento y estado, sin exponer métricas parciales.

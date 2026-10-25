@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
+import { Geist, IBM_Plex_Mono } from "next/font/google";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./globals.css";
 
-const ibmPlexSans = IBM_Plex_Sans({
+const geist = Geist({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
   display: "swap",
-  variable: "--font-ibm-plex-sans",
+  variable: "--font-ui",
 });
 const ibmPlexMono = IBM_Plex_Mono({
   subsets: ["latin"],
@@ -30,7 +29,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className={`${ibmPlexSans.variable} ${ibmPlexMono.variable}`}>
+    <html lang="es" className={geist.variable + " " + ibmPlexMono.variable}>
       <body>{children}</body>
     </html>
   );

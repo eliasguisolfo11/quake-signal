@@ -85,16 +85,27 @@ function DataProvenance({ payload }: { payload: AnalyticsSuccessResponse }) {
   return (
     <section className="analytics-provenance" aria-label="Procedencia y cobertura">
       <p>
-        Fuente <a href={meta.sourceUrl} target="_blank" rel="noreferrer">USGS · FDSN Event Web Service</a>
-        <span> · Período: {period} · Ventana UTC: {formatUtc(meta.window.startInclusive)} – {formatUtc(meta.window.endExclusive)}</span>
+        <span>Fuente</span>
+        <a href={meta.sourceUrl} target="_blank" rel="noreferrer">USGS · FDSN Event Web Service</a>
+        <span>· {period} · {scopeLabel({
+          period: meta.period,
+          minMagnitude: meta.filters.minMagnitude,
+          continent: meta.filters.continent,
+        })}</span>
       </p>
-      <p>
-        Recuperación: {formatCount(meta.recovery.retrievedCount)} de {formatCount(meta.recovery.expectedCount)} registros
-        <span> · Consultado {formatUtc(meta.retrievedAt)}</span>
-        <span> · <a href={meta.query.firstPageUrl} target="_blank" rel="noreferrer">Ver consulta del catálogo</a></span>
-      </p>
-      <p>Geografía: {meta.geography.countries} · {meta.geography.land}</p>
-      <p>{meta.coverageNote}</p>
+      <details className="analytics-provenance-details">
+        <summary>Intervalo UTC, recuperación y método</summary>
+        <div className="analytics-provenance-details-body">
+          <p>Ventana: {formatUtc(meta.window.startInclusive)} – {formatUtc(meta.window.endExclusive)}</p>
+          <p>
+            Recuperación: {formatCount(meta.recovery.retrievedCount)} de {formatCount(meta.recovery.expectedCount)} registros
+            <span> · Consultado {formatUtc(meta.retrievedAt)}</span>
+            <span> · <a href={meta.query.firstPageUrl} target="_blank" rel="noreferrer">Ver consulta del catálogo</a></span>
+          </p>
+          <p>Geografía: {meta.geography.countries} · {meta.geography.land}</p>
+          <p>{meta.coverageNote}</p>
+        </div>
+      </details>
     </section>
   );
 }
@@ -223,7 +234,7 @@ function AnalyticsPageContent({ filters }: { filters: AnalyticsFilters }) {
                 aria-describedby={filterError ? "analytics-magnitude-error" : "analytics-magnitude-help"}
                 onChange={(event) => setDraftMagnitude(event.target.value)}
               />
-              <span aria-hidden="true">Mw</span>
+              <span aria-hidden="true">M</span>
             </span>
             <span className="sr-only" id="analytics-magnitude-help">Opcional; incrementos de 0,1.</span>
             {filterError ? <span className="analytics-filter-error" id="analytics-magnitude-error">{filterError}</span> : null}
@@ -276,7 +287,7 @@ function AnalyticsPageContent({ filters }: { filters: AnalyticsFilters }) {
             ) : payload.meta.resultStatus === "no-matches" ? (
               <StatePanel title="Sin coincidencias" message={`No hay eventos que coincidan con ${scopeLabel(filters)}. Podés cambiar los filtros o restablecerlos.`} action={{ label: "Restablecer filtros", onClick: resetFilters }} />
             ) : null}
-            <AnalyticsInsights data={payload.data} period={filters.period} />
+            <AnalyticsInsights data={payload.data} filters={filters} />
           </>
         ) : null}
       </div>
