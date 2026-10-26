@@ -10,7 +10,7 @@ El producto es informativo. La magnitud describe el evento; por sí sola no dete
 
 **Referencia:** [Paradigm en Godly](https://godly.design/website/paradigmai/).
 
-Tomar de la referencia su superficie oscura y sobria, la tipografía clara, la jerarquía contenida y el uso de líneas finas para ordenar información. Adaptar ese lenguaje a una herramienta de monitoreo cuyo elemento principal es un mapa.
+Tomar de la referencia su superficie oscura y sobria, la tipografía clara, la jerarquía contenida y el uso de líneas finas para ordenar información. Adaptar ese lenguaje a una portada editorial que presenta una herramienta de monitoreo cuyo elemento principal es un mapa.
 
 La personalidad propia de QuakeSignal nace de su dato central: el epicentro. Los marcadores del mapa y el evento seleccionado forman una lectura visual consistente entre mapa y feed. No incorporar marcas, textos, ilustraciones ni componentes de Paradigm.
 
@@ -18,21 +18,21 @@ La personalidad propia de QuakeSignal nace de su dato central: el epicentro. Los
 
 ## Principios
 
-1. **El mapa responde primero.** Ocupa el área de trabajo más grande y muestra dónde están los eventos.
+1. **El mapa responde primero en el monitor.** Ocupa el área de trabajo más grande y muestra dónde están los eventos. La portada presenta el valor del producto y ofrece una entrada clara al monitor.
 2. **Cada respuesta tiene evidencia.** Magnitud, ubicación, profundidad y hora acompañan a cada evento.
 3. **La selección se sincroniza.** Elegir un marcador resalta su fila; elegir una fila centra el mapa en ese epicentro.
 4. **La frescura es visible.** La hora del sismo y la última actualización del feed son datos diferentes y se presentan por separado.
 5. **El color explica datos.** La interfaz usa superficies neutrales; el color aparece principalmente en magnitudes, estados reales de la fuente y foco.
 6. **La vista funciona sin el mapa.** El feed y el detalle permiten consultar eventos con teclado y tecnologías de asistencia.
 
-## Estructura de la pantalla principal
+## Estructura del monitor sísmico
 
 La pantalla de monitoreo evita una barra lateral permanente para conservar espacio para el mapa. La navegación principal queda en la barra superior.
 
 ### Barra superior
 
 - Marca tipográfica QuakeSignal y símbolo sencillo inspirado en ondas de propagación.
-- Navegación breve: Monitor e Historial.
+- Navegación breve: Monitor, Historial y Análisis.
 - Estado del feed con última actualización y acción para volver a consultar.
 - El estado nunca afirma “en tiempo real” si la fuente no ofrece esa garantía.
 
@@ -90,6 +90,18 @@ Al seleccionar un evento, el panel del feed pasa a mostrar su detalle y ofrece u
 
 En móvil, el detalle abre sobre el mapa como una hoja inferior expandible. Cerrar el detalle conserva la posición y el filtro del feed.
 
+## Portada de portfolio
+
+La ruta / presenta QuakeSignal a visitantes de portfolio. Sigue una lectura de introducción, demostración, método y acción:
+
+- Hero con una propuesta clara, una descripción breve y acciones para abrir el monitor o leer el método.
+- Carrusel accesible con capturas reales de Monitor, Historial y Análisis. Las capturas se entienden como vistas del producto; el monitor consulta la fuente al abrirse.
+- Composición de capacidades: ubicar epicentros, explorar períodos y consultar contexto geográfico. Las piezas decorativas no comunican métricas.
+- Acordeón de fuente, asignación geográfica y límites de interpretación.
+- Créditos enlazados a USGS, Natural Earth y los proveedores cartográficos.
+- Acción final para abrir el producto.
+
+La portada conserva la paleta, tipografía y líneas de la aplicación. Puede usar una composición editorial y animaciones sutiles de entrada. El contenido queda visible sin animación, las capturas son accesibles y se respeta prefers-reduced-motion.
 ## Identidad visual y tokens
 
 La paleta toma la base oscura de Paradigm y reserva tonos expresivos para los datos sísmicos.
@@ -136,7 +148,7 @@ Los rangos concretos de magnitud se definen junto con la fuente de datos y se im
 - Cambiar período o filtros actualiza el total, la lista, la leyenda contextual y los marcadores como una sola vista.
 - Los controles del mapa tienen etiquetas accesibles y alternativas de teclado.
 - La navegación por filas usa foco visible; el evento activo se identifica además de su color.
-- Las transiciones son breves y funcionales: selección, apertura de detalle y aparición de un menú. No hay animaciones de entrada ni pulsos continuos.
+- En Monitor, Historial y Análisis las transiciones son breves y funcionales: selección, apertura de detalle y aparición de un menú; no hay animaciones de entrada ni pulsos continuos. La portada admite animaciones de entrada discretas con GSAP y detiene el movimiento cuando se prefiere movimiento reducido.
 
 ## Estados de datos
 

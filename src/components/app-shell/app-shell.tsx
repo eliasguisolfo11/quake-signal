@@ -39,7 +39,7 @@ export function AppShell({
   return (
     <div className="app-frame">
       <header className="topbar">
-        <Link className="brand" href="/" aria-label="QuakeSignal, Monitor">
+        <Link className="brand" href="/" aria-label="QuakeSignal, inicio">
           <span className="brand-mark" aria-hidden="true">
             <span />
             <span />
@@ -49,7 +49,7 @@ export function AppShell({
         </Link>
 
         <nav className="primary-nav" aria-label="Navegación principal">
-          <Link href="/" aria-current={active === "monitor" ? "page" : undefined}>
+          <Link href="/monitor" aria-current={active === "monitor" ? "page" : undefined}>
             Monitor
           </Link>
           <Link
