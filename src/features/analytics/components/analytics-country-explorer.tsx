@@ -1,12 +1,24 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useMemo, useState } from "react";
 import type { AnalyticsFilters } from "../lib/contracts";
 import type { CountryGroup, GeographicGroup, UnassignedGroup } from "../lib/country-analytics";
-import { CountryActivityMap } from "./country-activity-map";
 import { CountryProfile } from "./country-profile";
 
 const COUNT_FORMATTER = new Intl.NumberFormat("es-AR", { maximumFractionDigits: 0 });
+const CountryActivityMap = dynamic(
+  () => import("./country-activity-map").then((module) => module.CountryActivityMap),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="analytics-country-map-loading" role="status" aria-label="Cargando mapa">
+        Cargando mapa…
+      </div>
+    ),
+  },
+);
+
 function countryGroups(groups: readonly GeographicGroup[]): CountryGroup[] {
   return groups.filter((group): group is CountryGroup => group.kind === "country");
 }
@@ -32,9 +44,10 @@ export function AnalyticsCountryExplorer({
     [groups],
   );
   const [requestedCountryId, setRequestedCountryId] = useState<string | null>(null);
-  const selectedGroup = groups.find(({ countryId }) => countryId === requestedCountryId)
-    ?? activeGroups[0]
-    ?? null;
+  const [isProfileOpen, setIsProfileOpen] = useState(true);
+  const selectedGroup = isProfileOpen
+    ? groups.find(({ countryId }) => countryId === requestedCountryId) ?? activeGroups[0] ?? null
+    : null;
   const [mapError, setMapError] = useState(false);
   const ranking = rankingRows(activeGroups, activeGroups[0]?.totalEvents ?? 0);
   const unassigned = useMemo(
@@ -43,6 +56,14 @@ export function AnalyticsCountryExplorer({
     ),
     [geography.groups],
   );
+  const selectCountry = (countryId: string | null) => {
+    setRequestedCountryId(countryId);
+    setIsProfileOpen(countryId !== null);
+  };
+  const closeCountryProfile = () => {
+    setRequestedCountryId(null);
+    setIsProfileOpen(false);
+  };
 
   return (
     <section className="analytics-country-explorer" aria-labelledby="analytics-country-explorer-title">
@@ -57,7 +78,7 @@ export function AnalyticsCountryExplorer({
           <select
             aria-label="Seleccionar país para ver su ficha"
             value={selectedGroup?.countryId ?? ""}
-            onChange={(event) => setRequestedCountryId(event.target.value || null)}
+            onChange={(event) => selectCountry(event.target.value || null)}
           >
             <option value="">Seleccioná un país</option>
             {activeGroups.map(({ countryId, name }) => (
@@ -90,7 +111,7 @@ export function AnalyticsCountryExplorer({
             <CountryActivityMap
               groups={geography.groups}
               selectedCountryId={selectedGroup?.countryId ?? null}
-              onSelectCountry={setRequestedCountryId}
+              onSelectCountry={selectCountry}
               onError={() => setMapError(true)}
             />
           )}
@@ -122,7 +143,7 @@ export function AnalyticsCountryExplorer({
                     className={`analytics-country-rank${group.countryId === selectedGroup?.countryId ? " is-selected" : ""}`}
                     type="button"
                     aria-pressed={group.countryId === selectedGroup?.countryId}
-                    onClick={() => setRequestedCountryId(group.countryId)}
+                    onClick={() => selectCountry(group.countryId)}
                   >
                     <span className="analytics-country-rank-index">{String(index + 1).padStart(2, "0")}</span>
                     <span className="analytics-country-rank-main">
@@ -139,7 +160,14 @@ export function AnalyticsCountryExplorer({
         </section>
       </div>
 
-      {selectedGroup ? <CountryProfile key={selectedGroup.countryId} group={selectedGroup} period={filters.period} /> : null}
+      {selectedGroup ? (
+        <CountryProfile
+          key={selectedGroup.countryId}
+          group={selectedGroup}
+          period={filters.period}
+          onClose={closeCountryProfile}
+        />
+      ) : null}
 
       {unassigned.length > 0 ? (
         <details className="analytics-unassigned-details">

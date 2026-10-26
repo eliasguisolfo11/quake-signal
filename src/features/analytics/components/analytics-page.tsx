@@ -85,9 +85,9 @@ function DataProvenance({ payload }: { payload: AnalyticsSuccessResponse }) {
   return (
     <section className="analytics-provenance" aria-label="Procedencia y cobertura">
       <p>
-        <span>Fuente</span>
+        <span>Fuente:</span>{" "}
         <a href={meta.sourceUrl} target="_blank" rel="noreferrer">USGS · FDSN Event Web Service</a>
-        <span>· {period} · {scopeLabel({
+        <span> · {period} · {scopeLabel({
           period: meta.period,
           minMagnitude: meta.filters.minMagnitude,
           continent: meta.filters.continent,
@@ -115,7 +115,7 @@ function PendingProvenance({ filters }: { filters: AnalyticsFilters }) {
   return (
     <section className="analytics-provenance" aria-label="Procedencia de la consulta">
       <p>
-        Fuente <a href="https://earthquake.usgs.gov/fdsnws/event/1/query" target="_blank" rel="noreferrer">USGS · FDSN Event Web Service</a>
+        Fuente: <a href="https://earthquake.usgs.gov/fdsnws/event/1/query" target="_blank" rel="noreferrer">USGS · FDSN Event Web Service</a>
         <span> · Período: {period} · Ámbito: {scopeLabel(filters)}</span>
       </p>
       <p>La ventana exacta UTC y la hora de recuperación se mostrarán cuando se complete la consulta.</p>

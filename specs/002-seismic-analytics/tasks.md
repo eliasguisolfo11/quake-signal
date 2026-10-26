@@ -100,6 +100,8 @@ Mostrar período/filtros, total, tendencia, destacados y detalle del evento sele
 **Criterios:** AC-01 a AC-12.
 **Área:** **specs/002-seismic-analytics/acceptance.md**.
 
+**Estado:** Completado el 2026-10-26. AC-01 a AC-12 aprobados; evidencias del build de producción y navegador integrado registradas en `acceptance.md`.
+
 Ejecutar las pruebas declaradas por el proyecto, lint y build; recorrer la experiencia en el navegador integrado en escritorio y móvil, con teclado, datos reales verificables y estados controlados. Registrar cada criterio, evidencia y límite sin extrapolar disponibilidad del proveedor.
 
 **Hecho cuando:** AC-01 a AC-12 tienen resultado y evidencia; filtros, indicadores, series y grupos coinciden; error, vacío e incompleto son distintos; navegación por teclado y layout móvil no requieren scroll horizontal; **npm test**, **npm run lint** y **npm run build** quedan registrados con su resultado real.
