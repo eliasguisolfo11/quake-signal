@@ -1,10 +1,24 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Map as MapLibreMap, NavigationControl, setWorkerUrl } from "maplibre-gl";
+import {
+  Map as MapLibreMap,
+  NavigationControl,
+  setWorkerUrl,
+} from "maplibre-gl";
 import type { GeoJSONSource } from "maplibre-gl";
 import type { QuakeEvent } from "../lib/types";
-import { MAGNITUDE_BANDS, magnitudeBandKey } from "../lib/event-filters";
+import { MAGNITUDE_BANDS } from "../lib/event-filters";
+import {
+  colorForMagnitude,
+  createEventMapSelectionController,
+  moveMap,
+} from "./event-map-selection";
+import {
+  addEventPulseLayers,
+  eventPulseGroup,
+  startEventPulses,
+} from "./event-map-pulse";
 
 const STYLE_URL = "https://tiles.openfreemap.org/styles/dark";
 const SOURCE_ID = "quakesignal-events";
@@ -62,7 +76,8 @@ function toFeatureCollection(events: QuakeEvent[], selectedEventId: string | nul
           properties: {
             eventId: event.id,
             magnitude: event.magnitude,
-            band: magnitudeBandKey(event.magnitude),
+            color: colorForMagnitude(event.magnitude),
+            pulseGroup: eventPulseGroup(event.id),
             selected: event.id === selectedEventId,
           },
         },
@@ -79,12 +94,21 @@ export function EventMap({
 }: EventMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
+  const onSelectRef = useRef(onSelect);
+  const selectionController = useMemo(
+    () => createEventMapSelectionController(),
+    [],
+  );
   const latestData = useRef(toFeatureCollection(events, selectedEventId));
   const [isReady, setIsReady] = useState(false);
   const data = useMemo(
     () => toFeatureCollection(events, selectedEventId),
     [events, selectedEventId],
   );
+
+  useEffect(() => {
+    onSelectRef.current = onSelect;
+  }, [onSelect]);
 
   useEffect(() => {
     if (!containerRef.current) {
@@ -94,6 +118,7 @@ export function EventMap({
     let loaded = false;
     let errorReported = false;
     let fallbackCityIconAdded = false;
+    let stopEventPulses = () => {};
     const map = new MapLibreMap({
       container: containerRef.current,
       style: STYLE_URL,
@@ -170,31 +195,36 @@ export function EventMap({
         },
         paint: { "text-color": "#f1f3f5" },
       });
+      addEventPulseLayers(map, SOURCE_ID);
+      map.addLayer({
+        id: "quake-event-rings",
+        type: "circle",
+        source: SOURCE_ID,
+        filter: ["!", ["has", "point_count"]],
+        paint: {
+          "circle-color": "#000000",
+          "circle-opacity": 0,
+          "circle-radius": [
+            "interpolate",
+            ["linear"],
+            ["coalesce", ["get", "magnitude"], 0],
+            0,
+            9,
+            7,
+            16,
+          ],
+          "circle-stroke-color": ["get", "color"],
+          "circle-stroke-width": 1,
+          "circle-stroke-opacity": 0.42,
+        },
+      });
       map.addLayer({
         id: "quake-events",
         type: "circle",
         source: SOURCE_ID,
         filter: ["!", ["has", "point_count"]],
         paint: {
-          "circle-color": [
-            "match",
-            ["get", "band"],
-            "under-2",
-            "#62bfb5",
-            "2-to-3",
-            "#77b8a9",
-            "3-to-4",
-            "#a6bd87",
-            "4-to-5",
-            "#e5b653",
-            "5-to-6",
-            "#e5a05c",
-            "6-to-7",
-            "#ef7862",
-            "7-plus",
-            "#d15b69",
-            "#929aa5",
-          ],
+          "circle-color": ["get", "color"],
           "circle-radius": [
             "interpolate",
             ["linear"],
@@ -219,6 +249,7 @@ export function EventMap({
           "circle-opacity": 0.96,
         },
       });
+      stopEventPulses = startEventPulses(map);
 
       map.on("click", "quake-clusters", async (event) => {
         const feature = event.features?.[0];
@@ -237,7 +268,7 @@ export function EventMap({
 
         try {
           const zoom = await source.getClusterExpansionZoom(clusterId);
-          map.easeTo({
+          moveMap(map, {
             center: point.coordinates as [number, number],
             zoom,
             duration: 450,
@@ -272,10 +303,12 @@ export function EventMap({
 
     return () => {
       window.clearTimeout(loadTimeout);
+      stopEventPulses();
+      selectionController.dispose();
       map.remove();
       mapRef.current = null;
     };
-  }, [onError, onSelect]);
+  }, [onError, onSelect, selectionController]);
 
   useEffect(() => {
     latestData.current = data;
@@ -284,21 +317,8 @@ export function EventMap({
   }, [data]);
 
   useEffect(() => {
-    if (!selectedEventId) {
-      return;
-    }
-
-    const event = events.find((item) => item.id === selectedEventId);
-    if (!event?.coordinates) {
-      return;
-    }
-
-    mapRef.current?.easeTo({
-      center: [event.coordinates.longitude, event.coordinates.latitude],
-      zoom: Math.max(mapRef.current.getZoom(), 4),
-      duration: 500,
-    });
-  }, [events, selectedEventId]);
+    selectionController.update(mapRef.current, events, selectedEventId, onSelectRef.current);
+  }, [events, selectedEventId, selectionController]);
 
   return (
     <div className="map-canvas-wrap">
@@ -313,13 +333,16 @@ export function EventMap({
           Cargando mapa
         </div>
       )}
-      <div className="map-legend" aria-label="Rangos de magnitud del mapa">
+      <div className="map-legend" role="group" aria-label="Rangos y símbolos del mapa">
         {MAGNITUDE_BANDS.map((band) => (
           <span className="map-legend-item" key={band.key}>
             <span aria-hidden="true" style={{ backgroundColor: band.color }} />
             {band.label}
           </span>
         ))}
+        <span className="map-legend-note">
+          Pulso visual: no representa propagación ni impacto.
+        </span>
       </div>
       <p className="map-attribution">
         © OpenFreeMap · © OpenMapTiles · © OpenStreetMap contributors
