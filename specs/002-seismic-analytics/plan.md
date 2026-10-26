@@ -95,7 +95,7 @@ No se prevé cambiar dependencias. Si el alcance real requiere una nueva bibliot
 
 Las pruebas unitarias usarán el **node:test** ya configurado y respuestas USGS controladas mediante mocks; no dependerán de que el catálogo real mantenga exactamente los mismos datos. Cubrirán límites UTC, empate inclusivo de magnitud, páginas/offset, deduplicación, diferencias de conteo, reintento único, respuesta incompleta, distribuciones, medianas, categorías geográficas y selección de destacados.
 
-Después de implementar T-10 a T-12 se ejecutarán **npm test**, **npm run lint** y **npm run build**. T-13 recorrerá AC-01 a AC-12 con el navegador integrado: escritorio y 375 px, teclado, filtros combinados, enlace de origen, selección por país/evento, respuestas vacías/erróneas/incompletas y consistencia de sumas. La evidencia quedará en **acceptance.md**. Estas verificaciones aún no se ejecutaron para este plan.
+Después de implementar T-10 a T-12 se ejecutarán **npm test**, **npm run lint** y **npm run build**. T-13 recorre AC-01 a AC-12 con el navegador integrado: escritorio y viewport de 375 px, teclado, filtros combinados, enlace de origen, selección por país/evento, respuestas vacías/erróneas/incompletas y consistencia de sumas. La evidencia real, incluidas las limitaciones del proveedor, queda en **acceptance.md**.
 
 ## Riesgos y límites
 

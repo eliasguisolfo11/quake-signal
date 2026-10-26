@@ -1,6 +1,6 @@
 import boundaryData from "../data/tectonic-plate-boundaries.json";
-import boundaryMetadata from "../data/tectonic-boundaries-metadata.json";
 import type { Coordinates } from "@/features/events/lib/types";
+import { TECTONIC_BOUNDARY_METADATA } from "./tectonic-boundary-metadata";
 
 type Position = readonly [longitude: number, latitude: number];
 type LineGeometry =
@@ -43,15 +43,7 @@ type Segment = {
 
 const EARTH_RADIUS_KM = 6_371.0088;
 const boundaryCollection = boundaryData as unknown as TectonicFeatureCollection;
-export const TECTONIC_BOUNDARY_METADATA = boundaryMetadata as {
-  source: string;
-  query: string;
-  capturedAt: string;
-  featureCount: number;
-  missingNames: number;
-  geometryCounts: Record<string, number>;
-  sha256: string;
-};
+export { TECTONIC_BOUNDARY_METADATA };
 
 function isValidPosition(position: unknown): position is Position {
   return (

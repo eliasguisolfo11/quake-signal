@@ -10,7 +10,7 @@ const geist = Geist({
 });
 const ibmPlexMono = IBM_Plex_Mono({
   subsets: ["latin"],
-  weight: ["400", "500"],
+  weight: ["400"],
   display: "swap",
   variable: "--font-ibm-plex-mono",
 });

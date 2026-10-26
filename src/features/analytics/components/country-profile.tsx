@@ -1,14 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { AnalyticsFilters } from "../lib/contracts";
 import type { CountBucket } from "../lib/aggregations";
 import type { CountryGroup } from "../lib/country-analytics";
 import type { HistoricalEvent } from "../lib/usgs-catalog";
-import {
-  findNearestTectonicBoundary,
-  TECTONIC_BOUNDARY_METADATA,
-} from "../lib/tectonic-context";
+import type { NearestTectonicBoundary } from "../lib/tectonic-context";
+import { TECTONIC_BOUNDARY_METADATA } from "../lib/tectonic-boundary-metadata";
 
 const COUNT_FORMATTER = new Intl.NumberFormat("es-AR", { maximumFractionDigits: 0 });
 const MAGNITUDE_FORMATTER = new Intl.NumberFormat("es-AR", {
@@ -154,10 +152,38 @@ function PeriodActivityChart({
 }
 
 function EventFacts({ event }: { event: HistoricalEvent }) {
-  const boundary = useMemo(
-    () => findNearestTectonicBoundary(event.coordinates),
-    [event.coordinates],
-  );
+  const [tectonicContext, setTectonicContext] = useState<
+    | { eventId: string; status: "loading" }
+    | { eventId: string; status: "error" }
+    | { eventId: string; status: "ready"; boundary: NearestTectonicBoundary | null }
+  >({ eventId: event.id, status: "loading" });
+
+  useEffect(() => {
+    let isCurrentEvent = true;
+
+    void import("../lib/tectonic-context")
+      .then(({ findNearestTectonicBoundary }) => {
+        if (isCurrentEvent) {
+          setTectonicContext({
+            eventId: event.id,
+            status: "ready",
+            boundary: findNearestTectonicBoundary(event.coordinates),
+          });
+        }
+      })
+      .catch(() => {
+        if (isCurrentEvent) setTectonicContext({ eventId: event.id, status: "error" });
+      });
+
+    return () => {
+      isCurrentEvent = false;
+    };
+  }, [event.coordinates, event.id]);
+
+  const eventContext = tectonicContext.eventId === event.id
+    ? tectonicContext
+    : { eventId: event.id, status: "loading" as const };
+  const boundary = eventContext.status === "ready" ? eventContext.boundary : null;
   const coordinates = formatCoordinates(event);
   const boundaryLabel = boundary
     ? boundary.boundaryName ?? BOUNDARY_LABELS[boundary.boundaryType] ?? "Límite sin nombre en la fuente"
@@ -182,7 +208,11 @@ function EventFacts({ event }: { event: HistoricalEvent }) {
         <span className="analytics-tectonic-marker" aria-hidden="true" />
         <div>
           <p className="analytics-eyebrow">CONTEXTO TECTÓNICO</p>
-          {boundary ? (
+          {eventContext.status === "loading" ? (
+            <p role="status">Cargando contexto de placas…</p>
+          ) : eventContext.status === "error" ? (
+            <p role="status">No se pudo cargar el contexto tectónico para esta ubicación.</p>
+          ) : boundary ? (
             <p>
               <strong>{boundaryLabel}</strong>
               <span>
@@ -191,7 +221,7 @@ function EventFacts({ event }: { event: HistoricalEvent }) {
               </span>
             </p>
           ) : (
-            <p>No se pudo calcular la proximidad con las coordenadas disponibles.</p>
+            <p>Sin datos tectónicos para esta ubicación.</p>
           )}
           <a href={TECTONIC_BOUNDARY_METADATA.source} target="_blank" rel="noreferrer">Fuente de límites de placas: USGS</a>
         </div>
@@ -204,9 +234,11 @@ function EventFacts({ event }: { event: HistoricalEvent }) {
 export function CountryProfile({
   group,
   period,
+  onClose,
 }: {
   group: CountryGroup;
   period: AnalyticsFilters["period"];
+  onClose: () => void;
 }) {
   const availableEvents = useMemo(() => {
     const seen = new Set<string>();
@@ -227,7 +259,10 @@ export function CountryProfile({
           <p className="analytics-eyebrow">FICHA DE ZONA · {group.continent}</p>
           <h2 id="analytics-country-profile-title">{group.name}</h2>
         </div>
-        <p><strong>{COUNT_FORMATTER.format(group.totalEvents)}</strong><span>eventos observados · {PERIOD_LABELS[period]}</span></p>
+        <div className="analytics-country-profile-actions">
+          <p><strong>{COUNT_FORMATTER.format(group.totalEvents)}</strong><span>eventos observados · {PERIOD_LABELS[period]}</span></p>
+          <button className="analytics-text-action" type="button" onClick={onClose}>Cerrar ficha</button>
+        </div>
       </header>
 
       <PeriodActivityChart buckets={group.timeSeries} period={period} countryName={group.name} />

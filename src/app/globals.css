@@ -2356,7 +2356,14 @@ select {
   border-bottom: 1px solid var(--color-border);
 }
 
-.analytics-country-profile-header > p {
+.analytics-country-profile-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.analytics-country-profile-actions p {
   display: grid;
   justify-items: end;
   gap: 2px;
@@ -2364,7 +2371,7 @@ select {
   text-align: right;
 }
 
-.analytics-country-profile-header > p strong {
+.analytics-country-profile-actions p strong {
   color: var(--color-text);
   font-family: var(--font-ibm-plex-mono), "SFMono-Regular", Consolas, monospace;
   font-size: 19px;
@@ -2372,7 +2379,7 @@ select {
   font-weight: 400;
 }
 
-.analytics-country-profile-header > p span {
+.analytics-country-profile-actions p span {
   color: var(--color-text-muted);
   font-size: 10px;
 }
@@ -2612,7 +2619,7 @@ select {
     width: 100%;
   }
 
-  .analytics-country-profile-header > p {
+  .analytics-country-profile-actions p {
     justify-items: start;
     text-align: left;
   }
@@ -2623,6 +2630,23 @@ select {
 }
 
 @media (max-width: 520px) {
+  .analytics-period-option,
+  .analytics-period-option span {
+    min-height: 44px;
+  }
+
+  .analytics-filter-field input,
+  .analytics-filter-field select,
+  .analytics-country-select select,
+  .analytics-country-profile-actions .analytics-text-action {
+    min-height: 44px;
+  }
+
+  .analytics-country-map .maplibregl-ctrl-group button {
+    width: 44px;
+    height: 44px;
+  }
+
   .analytics-explorer-map-panel,
   .analytics-explorer-ranking,
   .analytics-country-profile {
