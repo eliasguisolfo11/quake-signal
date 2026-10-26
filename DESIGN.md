@@ -59,10 +59,10 @@ El mapa y el feed empiezan a la misma altura. Las filas visibles del feed se lim
 ### Mapa
 
 - Base oscura y neutral, con costas, fronteras y nombres de lugares en tonos secundarios.
-- Los marcadores varían de tamaño según la magnitud y de tono según rangos declarados en la leyenda.
+- Los marcadores varían de tamaño según la magnitud y de tono según rangos declarados en la leyenda. Un anillo fino del mismo tono ayuda a localizar cada epicentro. En puntos individuales, dos frentes visuales lentos y desfasados añaden movimiento sin representar distancia, propagación física ni peligro.
 - La escala debe usar los valores de la fuente y dejar sus límites explícitos. No presentar esos rangos como niveles de daño.
 - Al alejar el mapa, los eventos cercanos se agrupan. Al acercarlo, se muestran los eventos individuales.
-- Un evento seleccionado se distingue con un contorno de 1 px y un estado visible; evitar halos luminosos.
+- Un evento seleccionado se distingue con un contorno visible y un único eco breve al seleccionarlo. Los pulsos ambientales del mapa usan dos frentes lentos, de baja opacidad y desfasados entre epicentros; los clústeres permanecen quietos. Ningún halo indica distancia o impacto.
 - Leyenda, zoom y reinicio de vista permanecen accesibles sin cubrir información importante.
 - La lista de eventos ofrece el mismo contenido esencial que el mapa.
 
@@ -148,7 +148,7 @@ Los rangos concretos de magnitud se definen junto con la fuente de datos y se im
 - Cambiar período o filtros actualiza el total, la lista, la leyenda contextual y los marcadores como una sola vista.
 - Los controles del mapa tienen etiquetas accesibles y alternativas de teclado.
 - La navegación por filas usa foco visible; el evento activo se identifica además de su color.
-- En Monitor, Historial y Análisis las transiciones son breves y funcionales: selección, apertura de detalle y aparición de un menú; no hay animaciones de entrada ni pulsos continuos. La portada admite animaciones de entrada discretas con GSAP y detiene el movimiento cuando se prefiere movimiento reducido.
+- En Monitor, Historial y Análisis las transiciones son breves y funcionales: selección, apertura de detalle y aparición de un menú. Los epicentros individuales pueden mantener pulsos ambientales lentos y desfasados; seleccionar uno añade un solo eco breve. Los pulsos, el eco y los desplazamientos suaves del mapa se suprimen cuando se prefiere movimiento reducido. La portada admite animaciones de entrada discretas con GSAP, también suprimidas con esa preferencia.
 
 ## Estados de datos
 
